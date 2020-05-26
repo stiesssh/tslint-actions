@@ -12,6 +12,6 @@ jobs:
         uses: stiesssh/tslint-actions@master
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          pattern: '*.ts'
+          pattern: 'files/*.ts'
       - name: Build
         run: npm run build
