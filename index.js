@@ -42,17 +42,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var core = require("@actions/core"); // tslint:disable-line
 // Currently @actions/github cannot be loaded via import statement due to typing error
-var github = require("@actions/github"); // tslint:disable-line
-var Octokit = require("@octokit/rest").Octokit;
+var github = require('@actions/github'); // tslint:disable-line
+var Octokit = require('@octokit/rest').Octokit;
 var common_tags_1 = require("common-tags");
 var fs = require("fs");
 var glob = require("glob");
 var path = require("path");
 var tslint_1 = require("tslint");
-var CHECK_NAME = "TSLint Checks";
+var CHECK_NAME = 'TSLint Checks';
 var SeverityAnnotationLevelMap = new Map([
-    ["warning", "warning"],
-    ["error", "failure"],
+    ['warning', 'warning'],
+    ['error', 'failure'],
 ]);
 (function () { return __awaiter(void 0, void 0, void 0, function () {
     var ctx, configFileName, projectFileName, pattern, ghToken, octokit, check, options, result, annotations;
@@ -60,16 +60,16 @@ var SeverityAnnotationLevelMap = new Map([
         switch (_a.label) {
             case 0:
                 ctx = github.context;
-                configFileName = core.getInput("config") || "tslint.json";
-                projectFileName = core.getInput("project");
-                pattern = core.getInput("pattern");
-                ghToken = core.getInput("token");
+                configFileName = core.getInput('config') || 'tslint.json';
+                projectFileName = core.getInput('project');
+                pattern = core.getInput('pattern');
+                ghToken = core.getInput('token');
                 if (!projectFileName && !pattern) {
-                    core.setFailed("tslint-actions: Please set project or pattern input");
+                    core.setFailed('tslint-actions: Please set project or pattern input');
                     return [2 /*return*/];
                 }
                 if (!ghToken) {
-                    core.setFailed("tslint-actions: Please set token");
+                    core.setFailed('tslint-actions: Please set token');
                     return [2 /*return*/];
                 }
                 octokit = new Octokit({ auth: ghToken });
@@ -78,13 +78,13 @@ var SeverityAnnotationLevelMap = new Map([
                         repo: ctx.repo.repo,
                         name: CHECK_NAME,
                         head_sha: ctx.sha,
-                        status: "in_progress"
+                        status: 'in_progress'
                     })];
             case 1:
                 check = _a.sent();
                 options = {
                     fix: false,
-                    formatter: "json"
+                    formatter: 'json'
                 };
                 result = (function () {
                     if (projectFileName && !pattern) {
@@ -108,7 +108,7 @@ var SeverityAnnotationLevelMap = new Map([
                         var files = glob.sync(pattern);
                         for (var _a = 0, files_2 = files; _a < files_2.length; _a++) {
                             var file = files_2[_a];
-                            var fileContents = fs.readFileSync(file, { encoding: "utf8" });
+                            var fileContents = fs.readFileSync(file, { encoding: 'utf8' });
                             var configuration = tslint_1.Configuration.findConfiguration(configFileName, file).results;
                             linter.lint(file, fileContents, configuration);
                         }
@@ -122,7 +122,7 @@ var SeverityAnnotationLevelMap = new Map([
                     path: failure.getFileName(),
                     start_line: failure.getStartPosition().getLineAndCharacter().line,
                     end_line: failure.getEndPosition().getLineAndCharacter().line,
-                    annotation_level: SeverityAnnotationLevelMap.get(failure.getRuleSeverity()) || "notice",
+                    annotation_level: SeverityAnnotationLevelMap.get(failure.getRuleSeverity()) || 'notice',
                     message: "[" + failure.getRuleName() + "] " + failure.getFailure()
                 }); });
                 // Update check
@@ -131,12 +131,12 @@ var SeverityAnnotationLevelMap = new Map([
                         repo: ctx.repo.repo,
                         check_run_id: check.data.id,
                         name: CHECK_NAME,
-                        status: "completed",
-                        conclusion: result.errorCount > 0 ? "failure" : "success",
+                        status: 'completed',
+                        conclusion: result.errorCount > 0 ? 'failure' : 'success',
                         output: {
                             title: CHECK_NAME,
                             summary: result.errorCount + " error(s), " + result.warningCount + " warning(s) found",
-                            text: common_tags_1.stripIndent(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n        ## Configuration\n\n        #### Actions Input\n\n        | Name | Value |\n        | ---- | ----- |\n        | config | `", "` |\n        | project | `", "` |\n        | pattern | `", "` |\n\n        #### TSLint Configuration\n\n        ```json\n        __CONFIG_CONTENT__\n        ```\n        </details>\n      "], ["\n        ## Configuration\n\n        #### Actions Input\n\n        | Name | Value |\n        | ---- | ----- |\n        | config | \\`", "\\` |\n        | project | \\`", "\\` |\n        | pattern | \\`", "\\` |\n\n        #### TSLint Configuration\n\n        \\`\\`\\`json\n        __CONFIG_CONTENT__\n        \\`\\`\\`\n        </details>\n      "])), configFileName, projectFileName || "(not provided)", pattern || "(not provided)").replace("__CONFIG_CONTENT__", JSON.stringify(tslint_1.Configuration.readConfigurationFile(configFileName), null, 2)),
+                            text: common_tags_1.stripIndent(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n        ## Configuration\n\n        #### Actions Input\n\n        | Name | Value |\n        | ---- | ----- |\n        | config | `", "` |\n        | project | `", "` |\n        | pattern | `", "` |\n\n        #### TSLint Configuration\n\n        ```json\n        __CONFIG_CONTENT__\n        ```\n        </details>\n      "], ["\n        ## Configuration\n\n        #### Actions Input\n\n        | Name | Value |\n        | ---- | ----- |\n        | config | \\`", "\\` |\n        | project | \\`", "\\` |\n        | pattern | \\`", "\\` |\n\n        #### TSLint Configuration\n\n        \\`\\`\\`json\n        __CONFIG_CONTENT__\n        \\`\\`\\`\n        </details>\n      "])), configFileName, projectFileName || '(not provided)', pattern || '(not provided)').replace('__CONFIG_CONTENT__', JSON.stringify(tslint_1.Configuration.readConfigurationFile(configFileName), null, 2)),
                             annotations: annotations
                         }
                     })];

@@ -1,36 +1,36 @@
-import * as core from "@actions/core"; // tslint:disable-line
+import * as core from '@actions/core'; // tslint:disable-line
 // Currently @actions/github cannot be loaded via import statement due to typing error
-const github = require("@actions/github"); // tslint:disable-line
-const { Octokit } = require("@octokit/rest");
-import { Context } from "@actions/github/lib/context";
-import { stripIndent as markdown } from "common-tags";
-import * as fs from "fs";
-import * as glob from "glob";
-import * as path from "path";
-import { Configuration, Linter, RuleSeverity } from "tslint";
+const github = require('@actions/github'); // tslint:disable-line
+const { Octokit } = require('@octokit/rest');
+import { Context } from '@actions/github/lib/context';
+import { stripIndent as markdown } from 'common-tags';
+import * as fs from 'fs';
+import * as glob from 'glob';
+import * as path from 'path';
+import { Configuration, Linter, RuleSeverity } from 'tslint';
 
-const CHECK_NAME = "TSLint Checks";
+const CHECK_NAME = 'TSLint Checks';
 
-const SeverityAnnotationLevelMap = new Map<RuleSeverity, "warning" | "failure">([
-  ["warning", "warning"],
-  ["error", "failure"],
+const SeverityAnnotationLevelMap = new Map<RuleSeverity, 'warning' | 'failure'>([
+  ['warning', 'warning'],
+  ['error', 'failure'],
 ]);
 
 (async () => {
   const ctx = github.context as Context;
 
-  const configFileName = core.getInput("config") || "tslint.json";
-  const projectFileName = core.getInput("project");
-  const pattern = core.getInput("pattern");
-  const ghToken = core.getInput("token");
+  const configFileName = core.getInput('config') || 'tslint.json';
+  const projectFileName = core.getInput('project');
+  const pattern = core.getInput('pattern');
+  const ghToken = core.getInput('token');
 
   if (!projectFileName && !pattern) {
-    core.setFailed("tslint-actions: Please set project or pattern input");
+    core.setFailed('tslint-actions: Please set project or pattern input');
     return;
   }
 
   if (!ghToken) {
-    core.setFailed("tslint-actions: Please set token");
+    core.setFailed('tslint-actions: Please set token');
     return;
   }
 
@@ -42,12 +42,12 @@ const SeverityAnnotationLevelMap = new Map<RuleSeverity, "warning" | "failure">(
     repo: ctx.repo.repo,
     name: CHECK_NAME,
     head_sha: ctx.sha,
-    status: "in_progress",
+    status: 'in_progress',
   });
 
   const options = {
     fix: false,
-    formatter: "json",
+    formatter: 'json',
   };
 
   // Create a new Linter instance
@@ -73,7 +73,7 @@ const SeverityAnnotationLevelMap = new Map<RuleSeverity, "warning" | "failure">(
 
       const files = glob.sync(pattern!);
       for (const file of files) {
-        const fileContents = fs.readFileSync(file, { encoding: "utf8" });
+        const fileContents = fs.readFileSync(file, { encoding: 'utf8' });
         const configuration = Configuration.findConfiguration(configFileName, file).results;
         linter.lint(file, fileContents, configuration);
       }
@@ -83,14 +83,14 @@ const SeverityAnnotationLevelMap = new Map<RuleSeverity, "warning" | "failure">(
   })();
 
   if (result.failures.length > 50) {
-    result.failures = result.failures.slice(0,50);
+    result.failures = result.failures.slice(0, 50);
   }
 
   const annotations = result.failures.map((failure) => ({
     path: failure.getFileName(),
     start_line: failure.getStartPosition().getLineAndCharacter().line,
     end_line: failure.getEndPosition().getLineAndCharacter().line,
-    annotation_level: SeverityAnnotationLevelMap.get(failure.getRuleSeverity()) || "notice",
+    annotation_level: SeverityAnnotationLevelMap.get(failure.getRuleSeverity()) || 'notice',
     message: `[${failure.getRuleName()}] ${failure.getFailure()}`,
   }));
 
@@ -100,8 +100,8 @@ const SeverityAnnotationLevelMap = new Map<RuleSeverity, "warning" | "failure">(
     repo: ctx.repo.repo,
     check_run_id: check.data.id,
     name: CHECK_NAME,
-    status: "completed",
-    conclusion: result.errorCount > 0 ? "failure" : "success",
+    status: 'completed',
+    conclusion: result.errorCount > 0 ? 'failure' : 'success',
     output: {
       title: CHECK_NAME,
       summary: `${result.errorCount} error(s), ${result.warningCount} warning(s) found`,
@@ -113,8 +113,8 @@ const SeverityAnnotationLevelMap = new Map<RuleSeverity, "warning" | "failure">(
         | Name | Value |
         | ---- | ----- |
         | config | \`${configFileName}\` |
-        | project | \`${projectFileName || "(not provided)"}\` |
-        | pattern | \`${pattern || "(not provided)"}\` |
+        | project | \`${projectFileName || '(not provided)'}\` |
+        | pattern | \`${pattern || '(not provided)'}\` |
 
         #### TSLint Configuration
 
@@ -122,7 +122,7 @@ const SeverityAnnotationLevelMap = new Map<RuleSeverity, "warning" | "failure">(
         __CONFIG_CONTENT__
         \`\`\`
         </details>
-      `.replace("__CONFIG_CONTENT__", JSON.stringify(Configuration.readConfigurationFile(configFileName), null, 2)),
+      `.replace('__CONFIG_CONTENT__', JSON.stringify(Configuration.readConfigurationFile(configFileName), null, 2)),
       annotations,
     },
   });
