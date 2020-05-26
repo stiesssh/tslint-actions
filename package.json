@@ -36,26 +36,24 @@
     "@vingle/commitlint-preset": "1.0.3",
     "@vingle/tslint-preset": "1.0.1",
     "chai": "4.2.0",
-    "husky": "3.1.0",
     "semantic-release": "15.14.0"
   },
   "dependencies": {
     "@actions/core": "^1.1.1",
     "@actions/github": "^1.1.0",
-    "@octokit/rest": "^16.28.9",
+    "@angular/compiler": "^9.0.0",
+    "@angular/core": "^9.0.0",
+    "@octokit/rest": "^17.0.0",
+    "codelyzer": "^5.2.1",
     "common-tags": "^1.8.0",
     "glob": "^7.1.4",
+    "rxjs": "^6.5.5",
     "tslint": "^5.20.0",
     "typescript": "^3.6.3"
   },
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
-    }
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
   "commitlint": {

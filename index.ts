@@ -1,8 +1,8 @@
 import * as core from "@actions/core"; // tslint:disable-line
 // Currently @actions/github cannot be loaded via import statement due to typing error
 const github = require("@actions/github"); // tslint:disable-line
+const { Octokit } = require("@octokit/rest");
 import { Context } from "@actions/github/lib/context";
-import * as Octokit from "@octokit/rest";
 import { stripIndent as markdown } from "common-tags";
 import * as fs from "fs";
 import * as glob from "glob";
@@ -33,8 +33,9 @@ const SeverityAnnotationLevelMap = new Map<RuleSeverity, "warning" | "failure">(
     core.setFailed("tslint-actions: Please set token");
     return;
   }
-
-  const octokit = new github.GitHub(ghToken) as Octokit;
+  
+  const octokit = new Octokit({ auth: ghToken });
+  
 
   // Create check
   const check = await octokit.checks.create({
@@ -82,7 +83,11 @@ const SeverityAnnotationLevelMap = new Map<RuleSeverity, "warning" | "failure">(
     }
   })();
 
-  const annotations: Octokit.ChecksCreateParamsOutputAnnotations[] = result.failures.map((failure) => ({
+  if (result.failures.length > 50) {
+    result.failures = result.failures.slice(0,50);
+  }
+
+  const annotations = result.failures.map((failure) => ({
     path: failure.getFileName(),
     start_line: failure.getStartPosition().getLineAndCharacter().line,
     end_line: failure.getEndPosition().getLineAndCharacter().line,
