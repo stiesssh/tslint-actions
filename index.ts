@@ -33,9 +33,8 @@ const SeverityAnnotationLevelMap = new Map<RuleSeverity, "warning" | "failure">(
     core.setFailed("tslint-actions: Please set token");
     return;
   }
-  
+
   const octokit = new Octokit({ auth: ghToken });
-  
 
   // Create check
   const check = await octokit.checks.create({
