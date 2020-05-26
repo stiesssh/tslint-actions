@@ -115,14 +115,7 @@ const SeverityAnnotationLevelMap = new Map<RuleSeverity, 'warning' | 'failure'>(
         | config | \`${configFileName}\` |
         | project | \`${projectFileName || '(not provided)'}\` |
         | pattern | \`${pattern || '(not provided)'}\` |
-
-        #### TSLint Configuration
-
-        \`\`\`json
-        __CONFIG_CONTENT__
-        \`\`\`
-        </details>
-      `.replace('__CONFIG_CONTENT__', JSON.stringify(Configuration.readConfigurationFile(configFileName), null, 2)),
+      `,
       annotations,
     },
   });
